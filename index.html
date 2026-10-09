@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Master - Roles Secrets</title>
+  <title>Game Master - Rôles Secrets</title>
   <link rel="manifest" href="manifest.json">
   <style>
     * { box-sizing: border-box; }
@@ -65,14 +65,36 @@
     select:focus, input:focus {
       border-color: #38bdf8;
     }
+    .player-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .player-controls button {
+      padding: 8px 12px;
+      font-size: 14px;
+      background: #334155;
+    }
     .player-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 8px;
       margin-bottom: 16px;
+      max-height: 250px;
+      overflow-y: auto;
     }
-    .player-list input {
+    .player-row {
+      display: flex;
+      gap: 8px;
+    }
+    .player-row input {
       margin-bottom: 0;
+    }
+    .btn-remove {
+      width: auto !important;
+      padding: 0 14px !important;
+      background: #ef4444 !important;
+      border-radius: 10px !important;
     }
     button {
       background: #2563eb;
@@ -121,7 +143,7 @@
 
   <div class="container">
     
-    <!-- ECRAN 1 : CONFIGURATION -->
+    <!-- ÉCRAN 1 : CONFIGURATION -->
     <div id="setup-screen" class="card">
       <h1>🎲 Game Master</h1>
       
@@ -132,21 +154,17 @@
         <option value="linq">Linq</option>
       </select>
 
-      <label>Noms des 7 Joueurs :</label>
-      <div class="player-list">
-        <input type="text" class="p-name" value="Joueur 1">
-        <input type="text" class="p-name" value="Joueur 2">
-        <input type="text" class="p-name" value="Joueur 3">
-        <input type="text" class="p-name" value="Joueur 4">
-        <input type="text" class="p-name" value="Joueur 5">
-        <input type="text" class="p-name" value="Joueur 6">
-        <input type="text" class="p-name" value="Joueur 7" style="grid-column: span 2;">
+      <label>Joueurs (<span id="player-count">7</span>) :</label>
+      <div id="player-list" class="player-list"></div>
+
+      <div class="player-controls">
+        <button type="button" onclick="addPlayer()">+ Ajouter un joueur</button>
       </div>
 
       <button onclick="startGame()">Lancer la manche</button>
     </div>
 
-    <!-- ECRAN 2 : PASSE LE TELEPHONE -->
+    <!-- ÉCRAN 2 : PASSE LE TÉLÉPHONE -->
     <div id="pass-screen" class="card hidden">
       <h2>Passe le téléphone à :</h2>
       <div class="player-highlight" id="current-player-name">Joueur 1</div>
@@ -154,14 +172,14 @@
       <button onclick="revealRole()">Voir mon rôle</button>
     </div>
 
-    <!-- ECRAN 3 : REVELATION DU ROLE -->
+    <!-- ÉCRAN 3 : RÉVÉLATION DU RÔLE -->
     <div id="reveal-screen" class="card hidden">
       <h2 id="reveal-player-name">Joueur 1</h2>
       <div class="role-box" id="role-text"></div>
       <button onclick="nextPlayer()">Cacher et passer au suivant</button>
     </div>
 
-    <!-- ECRAN 4 : FIN DE LA DISTRIBUTION -->
+    <!-- ÉCRAN 4 : FIN DE LA DISTRIBUTION -->
     <div id="end-screen" class="card hidden">
       <h2>🎉 Prêts à jouer !</h2>
       <div class="summary-box" id="game-summary"></div>
@@ -192,15 +210,48 @@
       ]
     };
 
+    let initialPlayers = ["Joueur 1", "Joueur 2", "Joueur 3", "Joueur 4", "Joueur 5", "Joueur 6", "Joueur 7"];
     let players = [];
     let roles = [];
     let currentIndex = 0;
     let currentGame = "";
     let currentData = {};
 
-    function startGame() {
+    function renderPlayerInputs() {
+      const listEl = document.getElementById('player-list');
+      listEl.innerHTML = '';
+      initialPlayers.forEach((name, index) => {
+        const row = document.createElement('div');
+        row.className = 'player-row';
+        row.innerHTML = `
+          <input type="text" class="p-name" value="${name}" placeholder="Nom du joueur">
+          ${initialPlayers.length > 4 ? `<button type="button" class="btn-remove" onclick="removePlayer(${index})">✕</button>` : ''}
+        `;
+        listEl.appendChild(row);
+      });
+      document.getElementById('player-count').innerText = initialPlayers.length;
+    }
+
+    function addPlayer() {
+      initialPlayers.push(`Joueur ${initialPlayers.length + 1}`);
+      renderPlayerInputs();
+    }
+
+    function removePlayer(index) {
+      if (initialPlayers.length > 4) {
+        initialPlayers.splice(index, 1);
+        renderPlayerInputs();
+      }
+    }
+
+    function updatePlayerNamesFromDOM() {
       const inputs = document.querySelectorAll('.p-name');
-      players = Array.from(inputs).map(i => i.value.trim() || "Joueur");
+      initialPlayers = Array.from(inputs).map((input, idx) => input.value.trim() || `Joueur ${idx + 1}`);
+    }
+
+    function startGame() {
+      updatePlayerNamesFromDOM();
+      players = [...initialPlayers];
       currentGame = document.getElementById('game-select').value;
       
       generateRoles();
@@ -298,6 +349,9 @@
       document.getElementById('end-screen').classList.add('hidden');
       document.getElementById('setup-screen').classList.remove('hidden');
     }
+
+    // Initialisation
+    renderPlayerInputs();
   </script>
 </body>
 </html>
