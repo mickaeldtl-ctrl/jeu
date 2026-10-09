@@ -1,0 +1,9 @@
+{
+  "short_name": "GameMaster",
+  "name": "Game Master - Rôles Secrets",
+  "start_url": "./index.html",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "display": "standalone",
+  "orientation": "portrait"
+}
