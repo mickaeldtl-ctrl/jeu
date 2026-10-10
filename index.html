@@ -20,10 +20,7 @@
       justify-content: center;
       align-items: center;
     }
-    .container {
-      width: 100%;
-      max-width: 420px;
-    }
+    .container { width: 100%; max-width: 420px; }
     .card {
       background: #1e293b;
       border: 1px solid #334155;
@@ -49,9 +46,22 @@
     .player-controls { display: flex; gap: 10px; margin-bottom: 12px; }
     .player-controls button { padding: 8px 12px; font-size: 14px; background: #334155; }
     .player-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; max-height: 250px; overflow-y: auto; }
-    .player-row { display: flex; gap: 8px; }
-    .player-row input { margin-bottom: 0; }
-    .btn-remove { width: auto !important; padding: 0 14px !important; background: #ef4444 !important; border-radius: 10px !important; }
+    .player-row { display: flex; gap: 8px; align-items: center; }
+    .player-row input { margin-bottom: 0; flex: 1; }
+    .btn-remove {
+      width: 42px !important;
+      height: 42px !important;
+      padding: 0 !important;
+      background: #ef4444 !important;
+      color: white !important;
+      border-radius: 10px !important;
+      font-weight: bold !important;
+      font-size: 18px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+    }
     button {
       background: #2563eb;
       color: white;
@@ -78,11 +88,20 @@
     }
     .player-highlight { font-size: 28px; font-weight: 800; color: #38bdf8; margin: 8px 0; }
     .order-badge { font-size: 14px; color: #94a3b8; margin-bottom: 16px; font-weight: 600; }
-    .summary-box { background: #0f172a; padding: 16px; border-radius: 10px; border: 1px solid #334155; margin: 16px 0; font-size: 16px; }
+    .summary-box { background: #0f172a; padding: 16px; border-radius: 10px; border: 1px solid #334155; margin: 16px 0; font-size: 15px; text-align: left; }
+    .turn-order-list { margin-top: 10px; padding-left: 20px; color: #38bdf8; font-weight: 600; }
     
     /* Timer Styles */
-    .timer-display { font-size: 36px; font-weight: 800; color: #f59e0b; margin: 10px 0; }
-    .timer-btn-group { display: flex; gap: 8px; margin-bottom: 16px; }
+    .timer-card {
+      background: #0f172a;
+      border: 1px solid #38bdf8;
+      border-radius: 14px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .step-title { font-size: 18px; font-weight: 700; color: #38bdf8; margin-bottom: 4px; }
+    .timer-display { font-size: 42px; font-weight: 800; color: #f59e0b; margin: 6px 0; }
+    .timer-btn-group { display: flex; gap: 8px; margin-top: 10px; }
     .timer-btn-group button { padding: 10px; font-size: 14px; background: #475569; }
   </style>
 </head>
@@ -113,10 +132,10 @@
 
     <!-- ÉCRAN 2 : PASSE LE TÉLÉPHONE -->
     <div id="pass-screen" class="card hidden">
-      <h2>Passe le téléphone à :</h2>
+      <h2>Donne le téléphone à :</h2>
       <div class="player-highlight" id="current-player-name">Joueur 1</div>
       <div class="order-badge" id="player-order-badge">Joueur 1 / 7</div>
-      <p style="color: #94a3b8; font-size: 14px;">Assure-toi que les autres ne regardent pas l'écran !</p>
+      <p style="color: #94a3b8; font-size: 14px;">Prends le téléphone, regarde ton rôle en cachette puis appuie sur passer !</p>
       <button onclick="revealRole()">Voir mon rôle</button>
     </div>
 
@@ -127,17 +146,18 @@
       <button onclick="nextPlayer()">Cacher et passer au suivant</button>
     </div>
 
-    <!-- ÉCRAN 4 : FIN DE LA DISTRIBUTION -->
+    <!-- ÉCRAN 4 : FIN DE LA DISTRIBUTION & CHRONO -->
     <div id="end-screen" class="card hidden">
-      <h2>🎉 Prêts à jouer !</h2>
+      <h2>🎉 Distribution terminée !</h2>
       <div class="summary-box" id="game-summary"></div>
 
-      <!-- TIMER DYNAMIQUE -->
-      <div id="timer-container" class="hidden">
-        <div class="timer-display" id="timer-clock">05:00</div>
+      <!-- TIMER MULTI-ÉTAPES -->
+      <div id="timer-container" class="timer-card hidden">
+        <div class="step-title" id="step-title">Phase 1</div>
+        <div class="timer-display" id="timer-clock">00:00</div>
         <div class="timer-btn-group">
           <button type="button" onclick="toggleTimer()" id="btn-timer-start">Démarrer</button>
-          <button type="button" onclick="resetTimer()">Réinitialiser</button>
+          <button type="button" onclick="resetTimerSequence()">Réinitialiser</button>
         </div>
       </div>
 
@@ -152,8 +172,7 @@
         "Un ascenseur", "Un phare", "Une brosse à dents", "Un sous-marin", 
         "Un télescope", "Un parachute", "Une montgolfière", "Un moulin à vent",
         "Un casque audio", "Une boulangerie", "Un miroir", "Un parapluie",
-        "Un sablier", "Un thermos", "Un réveil", "Une friteuse",
-        "Un projecteur", "Un distributeur", "Un télescope", "Un extincteur"
+        "Un sablier", "Un thermos", "Un réveil", "Une friteuse"
       ],
       fake: [
         { theme: "Cuisine", word: "Fouet", undercover: "Spatule" },
@@ -163,13 +182,11 @@
         { theme: "Objet", word: "Télescope", undercover: "Jumelles" },
         { theme: "Lieu", word: "Volcan", undercover: "Canyon" },
         { theme: "Monuments", word: "Tour Eiffel", undercover: "Arc de Triomphe" },
-        { theme: "Musique", word: "Guitare", undercover: "Basse" },
-        { theme: "Sport", word: "Tennis", undercover: "Badminton" }
+        { theme: "Musique", word: "Guitare", undercover: "Basse" }
       ],
       linq: [
         "Titanic", "Avocat", "Révolution", "Pompéi", "Hollywood", "Cendrillon", 
-        "Souris", "Éclair", "Casino", "Pirate", "Astronaute", "Labyrinthe",
-        "Périscope", "Symphonie", "Avalanche", "Caméléon", "Siphon"
+        "Souris", "Éclair", "Casino", "Pirate", "Astronaute", "Labyrinthe"
       ]
     };
 
@@ -180,27 +197,38 @@
     let currentGame = "";
     let currentData = {};
 
-    // Timer Variables
+    let timerSteps = [];
+    let currentStepIndex = 0;
     let timerInterval = null;
     let timerSeconds = 0;
     let isTimerRunning = false;
 
     function renderPlayerInputs() {
       const listEl = document.getElementById('player-list');
-      // Sauvegarder les valeurs actuelles saisies
-      const currentInputs = document.querySelectorAll('.p-name');
-      if (currentInputs.length > 0) {
-        initialPlayers = Array.from(currentInputs).map((input, idx) => input.value || `Joueur ${idx + 1}`);
-      }
-
       listEl.innerHTML = '';
+      
       initialPlayers.forEach((name, index) => {
         const row = document.createElement('div');
         row.className = 'player-row';
-        row.innerHTML = `
-          <input type="text" class="p-name" value="${name}" placeholder="Nom du joueur">
-          ${initialPlayers.length > 4 ? `<button type="button" class="btn-remove" onclick="removePlayer(${index})">✕</button>` : ''}
-        `;
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'p-name';
+        input.value = name;
+        input.placeholder = `Joueur ${index + 1}`;
+        input.onchange = saveCurrentPlayerNames;
+        
+        row.appendChild(input);
+
+        if (initialPlayers.length > 4) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'btn-remove';
+          btn.innerText = '✕';
+          btn.onclick = function() { removePlayer(index); };
+          row.appendChild(btn);
+        }
+
         listEl.appendChild(row);
       });
       document.getElementById('player-count').innerText = initialPlayers.length;
@@ -295,7 +323,7 @@
       document.getElementById('reveal-screen').classList.add('hidden');
       document.getElementById('pass-screen').classList.remove('hidden');
       document.getElementById('current-player-name').innerText = players[currentIndex];
-      document.getElementById('player-order-badge').innerText = `Joueur ${currentIndex + 1} / ${players.length}`;
+      document.getElementById('player-order-badge').innerText = `Tour de passage : ${currentIndex + 1} / ${players.length}`;
     }
 
     function revealRole() {
@@ -321,28 +349,49 @@
       let summary = "";
       const timerContainer = document.getElementById('timer-container');
 
+      let orderHTML = "<br><b>Ordre du tour :</b><ol class='turn-order-list'>";
+      players.forEach(p => orderHTML += `<li>${p}</li>`);
+      orderHTML += "</ol>";
+
       if (currentGame === 'fake') {
-        summary = `Thème annoncé : <b>${currentData.theme}</b><br><small>1 Fake Artist (rien) & 1 Undercover (mot piège)</small>`;
-        setupTimer(180); // 3 minutes pour le dessin
+        const drawTime = players.length * 20;
+        summary = `Thème : <b>${currentData.theme}</b><br><small>1 Fake Artist & 1 Undercover en jeu.</small>` + orderHTML;
+        
+        timerSteps = [
+          { name: `🎨 Dessin - Tour 1 (${players.length} × 20s)`, duration: drawTime },
+          { name: `🎨 Dessin - Tour 2 (${players.length} × 20s)`, duration: drawTime },
+          { name: "🗣️ Débat & Vote", duration: 60 }
+        ];
+        initTimerSequence();
         timerContainer.classList.remove('hidden');
       } else if (currentGame === 'insider') {
-        summary = "Tout le monde a son rôle.<br>Le Maître du Jeu lance le chrono !";
-        setupTimer(300); // 5 minutes pour les questions
+        summary = "Le MJ lance le chrono et répond par Oui / Non / Je ne sais pas." + orderHTML;
+        
+        timerSteps = [
+          { name: "⏱️ Questions (Insider)", duration: 300 }
+        ];
+        initTimerSequence();
         timerContainer.classList.remove('hidden');
       } else {
-        summary = "Les 2 Espions ont reçu le même mot.<br>Que la manche commence !";
+        summary = "Les joueurs donnent leurs mots indices dans cet ordre :" + orderHTML;
         timerContainer.classList.add('hidden');
       }
       document.getElementById('game-summary').innerHTML = summary;
     }
 
-    /* GESTION DU CHRONOMÈTRE */
-    function setupTimer(seconds) {
+    function initTimerSequence() {
       clearInterval(timerInterval);
       isTimerRunning = false;
-      timerSeconds = seconds;
+      currentStepIndex = 0;
+      loadCurrentStep();
+      document.getElementById('btn-timer-start').innerText = "Démarrer le chrono";
+    }
+
+    function loadCurrentStep() {
+      const step = timerSteps[currentStepIndex];
+      timerSeconds = step.duration;
+      document.getElementById('step-title').innerText = step.name;
       updateTimerDisplay();
-      document.getElementById('btn-timer-start').innerText = "Démarrer";
     }
 
     function updateTimerDisplay() {
@@ -360,22 +409,29 @@
       } else {
         isTimerRunning = true;
         document.getElementById('btn-timer-start').innerText = "Pause";
+        
         timerInterval = setInterval(() => {
           if (timerSeconds > 0) {
             timerSeconds--;
             updateTimerDisplay();
           } else {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-            alert("⏰ Temps écoulé !");
+            currentStepIndex++;
+            if (currentStepIndex < timerSteps.length) {
+              loadCurrentStep();
+            } else {
+              clearInterval(timerInterval);
+              isTimerRunning = false;
+              document.getElementById('step-title').innerText = "🏁 Fin de la partie !";
+              document.getElementById('btn-timer-start').innerText = "Terminé";
+              alert("⏰ Toutes les phases sont terminées !");
+            }
           }
         }, 1000);
       }
     }
 
-    function resetTimer() {
-      clearInterval(timerInterval);
-      setupTimer(currentGame === 'insider' ? 300 : 180);
+    function resetTimerSequence() {
+      initTimerSequence();
     }
 
     function resetGame() {
@@ -384,7 +440,6 @@
       document.getElementById('setup-screen').classList.remove('hidden');
     }
 
-    // Initialisation
     renderPlayerInputs();
   </script>
 </body>
