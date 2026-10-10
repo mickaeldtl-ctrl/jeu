@@ -134,7 +134,7 @@
     <div id="pass-screen" class="card hidden">
       <h2>Donne le téléphone à :</h2>
       <div class="player-highlight" id="current-player-name">Joueur 1</div>
-      <div class="order-badge" id="player-order-badge">Joueur 1 / 7</div>
+      <div class="order-badge" id="player-order-badge">Tour de passage : 1 / 7</div>
       <p style="color: #94a3b8; font-size: 14px;">Prends le téléphone, regarde ton rôle en cachette puis appuie sur passer !</p>
       <button onclick="revealRole()">Voir mon rôle</button>
     </div>
@@ -172,7 +172,10 @@
         "Un ascenseur", "Un phare", "Une brosse à dents", "Un sous-marin", 
         "Un télescope", "Un parachute", "Une montgolfière", "Un moulin à vent",
         "Un casque audio", "Une boulangerie", "Un miroir", "Un parapluie",
-        "Un sablier", "Un thermos", "Un réveil", "Une friteuse"
+        "Un sablier", "Un thermos", "Un réveil", "Une friteuse",
+        "Un igloo", "Un hamac", "Un cactus", "Un ukulélé", "Une boussole",
+        "Un extincteur", "Un boomerang", "Un stéthoscope", "Une passoire",
+        "Un ventilateur", "Un projecteur", "Un distributeur", "Un monocle"
       ],
       fake: [
         { theme: "Cuisine", word: "Fouet", undercover: "Spatule" },
@@ -182,11 +185,21 @@
         { theme: "Objet", word: "Télescope", undercover: "Jumelles" },
         { theme: "Lieu", word: "Volcan", undercover: "Canyon" },
         { theme: "Monuments", word: "Tour Eiffel", undercover: "Arc de Triomphe" },
-        { theme: "Musique", word: "Guitare", undercover: "Basse" }
+        { theme: "Musique", word: "Guitare", undercover: "Basse" },
+        { theme: "Sport", word: "Tennis", undercover: "Badminton" },
+        { theme: "Nature", word: "Cascade", undercover: "Rivière" },
+        { theme: "Vêtement", word: "Bonnet", undercover: "Casquette" },
+        { theme: "Maison", word: "Canapé", undercover: "Fauteuil" },
+        { theme: "Outil", word: "Marteau", undercover: "Maillet" }
       ],
       linq: [
         "Titanic", "Avocat", "Révolution", "Pompéi", "Hollywood", "Cendrillon", 
-        "Souris", "Éclair", "Casino", "Pirate", "Astronaute", "Labyrinthe"
+        "Souris", "Éclair", "Casino", "Pirate", "Astronaute", "Labyrinthe",
+        "Périscope", "Symphonie", "Avalanche", "Caméléon", "Siphon", "Alambic",
+        "Casse-noisette", "Météorite", "Sous-marin", "Boussole", "Catacombes",
+        "Sablier", "Bordereau", "Catapulte", "Coriandre", "Glace pilée",
+        "Pamplemousse", "Séquoia", "Récidive", "Coïncidence", "Anachronisme",
+        "Paradoxe", "Éclipse", "Symbiose", "Hypoténuse", "Isocèle"
       ]
     };
 
