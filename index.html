@@ -31,26 +31,9 @@
       padding: 24px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
     }
-    h1 {
-      font-size: 28px;
-      margin-top: 0;
-      margin-bottom: 20px;
-      color: #38bdf8;
-    }
-    h2 {
-      font-size: 20px;
-      margin-top: 0;
-      margin-bottom: 16px;
-      color: #f1f5f9;
-    }
-    label {
-      display: block;
-      text-align: left;
-      font-size: 14px;
-      font-weight: 600;
-      color: #94a3b8;
-      margin-bottom: 6px;
-    }
+    h1 { font-size: 28px; margin-top: 0; margin-bottom: 20px; color: #38bdf8; }
+    h2 { font-size: 20px; margin-top: 0; margin-bottom: 16px; color: #f1f5f9; }
+    label { display: block; text-align: left; font-size: 14px; font-weight: 600; color: #94a3b8; margin-bottom: 6px; }
     select, input {
       width: 100%;
       padding: 12px 14px;
@@ -62,40 +45,13 @@
       font-size: 15px;
       outline: none;
     }
-    select:focus, input:focus {
-      border-color: #38bdf8;
-    }
-    .player-controls {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .player-controls button {
-      padding: 8px 12px;
-      font-size: 14px;
-      background: #334155;
-    }
-    .player-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 16px;
-      max-height: 250px;
-      overflow-y: auto;
-    }
-    .player-row {
-      display: flex;
-      gap: 8px;
-    }
-    .player-row input {
-      margin-bottom: 0;
-    }
-    .btn-remove {
-      width: auto !important;
-      padding: 0 14px !important;
-      background: #ef4444 !important;
-      border-radius: 10px !important;
-    }
+    select:focus, input:focus { border-color: #38bdf8; }
+    .player-controls { display: flex; gap: 10px; margin-bottom: 12px; }
+    .player-controls button { padding: 8px 12px; font-size: 14px; background: #334155; }
+    .player-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; max-height: 250px; overflow-y: auto; }
+    .player-row { display: flex; gap: 8px; }
+    .player-row input { margin-bottom: 0; }
+    .btn-remove { width: auto !important; padding: 0 14px !important; background: #ef4444 !important; border-radius: 10px !important; }
     button {
       background: #2563eb;
       color: white;
@@ -108,10 +64,7 @@
       width: 100%;
       transition: background 0.2s, transform 0.1s;
     }
-    button:active {
-      background: #1d4ed8;
-      transform: scale(0.98);
-    }
+    button:active { background: #1d4ed8; transform: scale(0.98); }
     .hidden { display: none; }
     .role-box {
       background: #0284c7;
@@ -123,20 +76,14 @@
       margin: 20px 0;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
-    .player-highlight {
-      font-size: 28px;
-      font-weight: 800;
-      color: #38bdf8;
-      margin: 12px 0 20px 0;
-    }
-    .summary-box {
-      background: #0f172a;
-      padding: 16px;
-      border-radius: 10px;
-      border: 1px solid #334155;
-      margin: 16px 0;
-      font-size: 16px;
-    }
+    .player-highlight { font-size: 28px; font-weight: 800; color: #38bdf8; margin: 8px 0; }
+    .order-badge { font-size: 14px; color: #94a3b8; margin-bottom: 16px; font-weight: 600; }
+    .summary-box { background: #0f172a; padding: 16px; border-radius: 10px; border: 1px solid #334155; margin: 16px 0; font-size: 16px; }
+    
+    /* Timer Styles */
+    .timer-display { font-size: 36px; font-weight: 800; color: #f59e0b; margin: 10px 0; }
+    .timer-btn-group { display: flex; gap: 8px; margin-bottom: 16px; }
+    .timer-btn-group button { padding: 10px; font-size: 14px; background: #475569; }
   </style>
 </head>
 <body>
@@ -150,7 +97,7 @@
       <label for="game-select">Jeu sélectionné :</label>
       <select id="game-select">
         <option value="insider">Insider</option>
-        <option value="fake">Fake Artist</option>
+        <option value="fake">Fake Artist (avec Undercover)</option>
         <option value="linq">Linq</option>
       </select>
 
@@ -168,6 +115,7 @@
     <div id="pass-screen" class="card hidden">
       <h2>Passe le téléphone à :</h2>
       <div class="player-highlight" id="current-player-name">Joueur 1</div>
+      <div class="order-badge" id="player-order-badge">Joueur 1 / 7</div>
       <p style="color: #94a3b8; font-size: 14px;">Assure-toi que les autres ne regardent pas l'écran !</p>
       <button onclick="revealRole()">Voir mon rôle</button>
     </div>
@@ -183,6 +131,16 @@
     <div id="end-screen" class="card hidden">
       <h2>🎉 Prêts à jouer !</h2>
       <div class="summary-box" id="game-summary"></div>
+
+      <!-- TIMER DYNAMIQUE -->
+      <div id="timer-container" class="hidden">
+        <div class="timer-display" id="timer-clock">05:00</div>
+        <div class="timer-btn-group">
+          <button type="button" onclick="toggleTimer()" id="btn-timer-start">Démarrer</button>
+          <button type="button" onclick="resetTimer()">Réinitialiser</button>
+        </div>
+      </div>
+
       <button onclick="resetGame()" style="background: #10b981;">Nouvelle manche</button>
     </div>
 
@@ -193,20 +151,25 @@
       insider: [
         "Un ascenseur", "Un phare", "Une brosse à dents", "Un sous-marin", 
         "Un télescope", "Un parachute", "Une montgolfière", "Un moulin à vent",
-        "Un casque audio", "Une boulangerie", "Un miroir", "Un parapluie"
+        "Un casque audio", "Une boulangerie", "Un miroir", "Un parapluie",
+        "Un sablier", "Un thermos", "Un réveil", "Une friteuse",
+        "Un projecteur", "Un distributeur", "Un télescope", "Un extincteur"
       ],
       fake: [
-        { theme: "Transport", word: "Hélicoptère" },
-        { theme: "Nourriture", word: "Sushi" },
-        { theme: "Animal", word: "Caméléon" },
-        { theme: "Objet", word: "Télescope" },
-        { theme: "Lieu", word: "Volcan" },
-        { theme: "Monuments", word: "Tour Eiffel" },
-        { theme: "Animal", word: "Autruche" }
+        { theme: "Cuisine", word: "Fouet", undercover: "Spatule" },
+        { theme: "Transport", word: "Hélicoptère", undercover: "Avion" },
+        { theme: "Nourriture", word: "Sushi", undercover: "Maki" },
+        { theme: "Animal", word: "Caméléon", undercover: "Lézard" },
+        { theme: "Objet", word: "Télescope", undercover: "Jumelles" },
+        { theme: "Lieu", word: "Volcan", undercover: "Canyon" },
+        { theme: "Monuments", word: "Tour Eiffel", undercover: "Arc de Triomphe" },
+        { theme: "Musique", word: "Guitare", undercover: "Basse" },
+        { theme: "Sport", word: "Tennis", undercover: "Badminton" }
       ],
       linq: [
-        "Titanic", "Avocat", "Révolution", "Pompéi", 
-        "Hollywood", "Cendrillon", "Souris", "Éclair", "Casino"
+        "Titanic", "Avocat", "Révolution", "Pompéi", "Hollywood", "Cendrillon", 
+        "Souris", "Éclair", "Casino", "Pirate", "Astronaute", "Labyrinthe",
+        "Périscope", "Symphonie", "Avalanche", "Caméléon", "Siphon"
       ]
     };
 
@@ -217,8 +180,19 @@
     let currentGame = "";
     let currentData = {};
 
+    // Timer Variables
+    let timerInterval = null;
+    let timerSeconds = 0;
+    let isTimerRunning = false;
+
     function renderPlayerInputs() {
       const listEl = document.getElementById('player-list');
+      // Sauvegarder les valeurs actuelles saisies
+      const currentInputs = document.querySelectorAll('.p-name');
+      if (currentInputs.length > 0) {
+        initialPlayers = Array.from(currentInputs).map((input, idx) => input.value || `Joueur ${idx + 1}`);
+      }
+
       listEl.innerHTML = '';
       initialPlayers.forEach((name, index) => {
         const row = document.createElement('div');
@@ -233,24 +207,28 @@
     }
 
     function addPlayer() {
+      saveCurrentPlayerNames();
       initialPlayers.push(`Joueur ${initialPlayers.length + 1}`);
       renderPlayerInputs();
     }
 
     function removePlayer(index) {
       if (initialPlayers.length > 4) {
+        saveCurrentPlayerNames();
         initialPlayers.splice(index, 1);
         renderPlayerInputs();
       }
     }
 
-    function updatePlayerNamesFromDOM() {
+    function saveCurrentPlayerNames() {
       const inputs = document.querySelectorAll('.p-name');
-      initialPlayers = Array.from(inputs).map((input, idx) => input.value.trim() || `Joueur ${idx + 1}`);
+      if (inputs.length > 0) {
+        initialPlayers = Array.from(inputs).map((input, idx) => input.value.trim() || `Joueur ${idx + 1}`);
+      }
     }
 
     function startGame() {
-      updatePlayerNamesFromDOM();
+      saveCurrentPlayerNames();
       players = [...initialPlayers];
       currentGame = document.getElementById('game-select').value;
       
@@ -281,11 +259,16 @@
       else if (currentGame === 'fake') {
         const item = WORDS.fake[Math.floor(Math.random() * WORDS.fake.length)];
         currentData = item;
+        
         let fakeIndex = Math.floor(Math.random() * count);
+        let undercoverIndex = Math.floor(Math.random() * count);
+        while (undercoverIndex === fakeIndex) undercoverIndex = Math.floor(Math.random() * count);
 
         for (let i = 0; i < count; i++) {
           if (i === fakeIndex) {
-            roles.push(`Thème : <b>${item.theme}</b><br><br>Tu es le <b>FAKE ARTIST (X)</b> !`);
+            roles.push(`Thème : <b>${item.theme}</b><br><br>Tu es le <b>FAKE ARTIST (X)</b> !<br>(Tu n'as pas de mot)`);
+          } else if (i === undercoverIndex) {
+            roles.push(`Thème : <b>${item.theme}</b><br><br>Tu es l'<b>UNDERCOVER</b> !<br>Mot proche : <b>${item.undercover}</b>`);
           } else {
             roles.push(`Thème : <b>${item.theme}</b><br><br>Mot à dessiner :<br><b>${item.word}</b>`);
           }
@@ -312,6 +295,7 @@
       document.getElementById('reveal-screen').classList.add('hidden');
       document.getElementById('pass-screen').classList.remove('hidden');
       document.getElementById('current-player-name').innerText = players[currentIndex];
+      document.getElementById('player-order-badge').innerText = `Joueur ${currentIndex + 1} / ${players.length}`;
     }
 
     function revealRole() {
@@ -335,17 +319,67 @@
       document.getElementById('end-screen').classList.remove('hidden');
       
       let summary = "";
+      const timerContainer = document.getElementById('timer-container');
+
       if (currentGame === 'fake') {
-        summary = `Thème annoncé : <b>${currentData.theme}</b>`;
+        summary = `Thème annoncé : <b>${currentData.theme}</b><br><small>1 Fake Artist (rien) & 1 Undercover (mot piège)</small>`;
+        setupTimer(180); // 3 minutes pour le dessin
+        timerContainer.classList.remove('hidden');
       } else if (currentGame === 'insider') {
         summary = "Tout le monde a son rôle.<br>Le Maître du Jeu lance le chrono !";
+        setupTimer(300); // 5 minutes pour les questions
+        timerContainer.classList.remove('hidden');
       } else {
         summary = "Les 2 Espions ont reçu le même mot.<br>Que la manche commence !";
+        timerContainer.classList.add('hidden');
       }
       document.getElementById('game-summary').innerHTML = summary;
     }
 
+    /* GESTION DU CHRONOMÈTRE */
+    function setupTimer(seconds) {
+      clearInterval(timerInterval);
+      isTimerRunning = false;
+      timerSeconds = seconds;
+      updateTimerDisplay();
+      document.getElementById('btn-timer-start').innerText = "Démarrer";
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timerSeconds / 60);
+      const secs = timerSeconds % 60;
+      document.getElementById('timer-clock').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function toggleTimer() {
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        document.getElementById('btn-timer-start').innerText = "Reprendre";
+      } else {
+        isTimerRunning = true;
+        document.getElementById('btn-timer-start').innerText = "Pause";
+        timerInterval = setInterval(() => {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            alert("⏰ Temps écoulé !");
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      setupTimer(currentGame === 'insider' ? 300 : 180);
+    }
+
     function resetGame() {
+      clearInterval(timerInterval);
       document.getElementById('end-screen').classList.add('hidden');
       document.getElementById('setup-screen').classList.remove('hidden');
     }
